@@ -61,6 +61,8 @@ class Thing():
 
     def display_cont_class(self, pars, index=-1):
         (name, PyCont) = self.cont_classes[index]
+
+        # Go ahead and compute it upon registration
         print('Computing curve...')
         start = perf_counter()
         PyCont[name].backward()
@@ -93,25 +95,27 @@ class Thing():
 
         print('Computing limit-cycle curve...')
         start = perf_counter()
-        PyCont['LC1'].forward()
         PyCont['LC1'].backward()
+        PyCont['LC1'].forward()
         print('done in %.3f seconds!' % (perf_counter()-start))
 
         PyCont['LC1'].display(pars, stability=True)
+        PyCont['LC1'].display((pars[0], pars[1]+'_min'), stability=True)
 
+        # TODO(matthew-c21): Keep track of associated figures.
         PyCont['LC1'].display(stability=True, figure='new', axes=(1, 2, 1))
         PyCont['LC1'].plot_cycles(
             coords=('R', 'r'), linewidth=1, axes=(1, 2, 2), figure='fig2')
         pass
 
 
-model_mmi2_full = {
+model_mmi2 = {
     'pars': {
         'mu': 5,
-        'b1': 9.0,
-        'b2': 1.3 * 1,
-        'a1': 0.7,
-        'a2': 0.25,
+        'b1': 12.0,  # 9.0,
+        'b2': 1.2,  # 1.3 * 1,
+        'a1': 12.0,  # 0.7,
+        'a2': 1.2,  # 0.25,
         'sR': 1.0,
         'kR': 1,
         'kr': 1,
@@ -122,24 +126,24 @@ model_mmi2_full = {
         'g': 0.2
     },
     'vars': {
-        'r':
+        'r': \
         'Tr * (mu - kr * (r - 1 * 2 * c1 - 2 * 1 * c2) \
             - b1 * 1 * 2 * kr * c1 \
             - b2 * 2 * 1 * kr * c2)',
-        'R':
+        'R': \
         'g*(sR - kR * (R - 2 * c1 - 1 * c2) \
             - 2 * kR * c1 * a1 - 1 * kR * c2 * a2)',
-        'c1':
+        'c1':\
         'Ts * (K1 * (R - 2 * c1 - c2) * (r - 2 * c1 - 2 * c2) - c1)',
-        'c2':
+        'c2':\
         'Ts * (K2 * c1 * (r - 2 * c1 - 2 * c2) - c2)',
     },
 
     'fns': {}, 'aux': [], 'name': 'mmi2'}
 
-ics_1 = {'r': 0.8, 'R': 0.1, 'c1': 0.1, 'c2': 0.2}
+ics_1 = {'r': 0.8, 'R': 0.1, 'c1': 1.0, 'c2': 0.0}
 
-thing = Thing('mmi2_full', model_mmi2_full, ics_1)
+thing = Thing('mmi2_full', model_mmi2, ics_1)
 thing.register_continuation_class(create_pcargs('EQ1', ['mu'], 1e-4, 1000))
 thing.display_cont_class(('mu', 'R'))
 
