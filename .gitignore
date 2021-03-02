@@ -7,3 +7,5 @@ fort.*
 _auto*
 auto_*
 output.b
+timesheets/
+vars.txt
